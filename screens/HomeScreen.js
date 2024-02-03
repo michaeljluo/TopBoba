@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, FlatList, Image, StyleSheet } from 'react-native';
+import { TouchableWithoutFeedback } from 'react-native';
 
 const bobaShops = [
   {
@@ -17,23 +18,31 @@ const bobaShops = [
   // Add more shops as needed
 ];
 
-const HomeScreen = () => {
+// ... (previous code)
+
+const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <FlatList
         data={bobaShops}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.shopContainer}>
-            <Image source={item.image} style={styles.shopImage} />
-            <Text style={styles.shopName}>{item.name}</Text>
-            <Text style={styles.shopDescription}>{item.description}</Text>
-          </View>
+          <TouchableWithoutFeedback
+            onPress={() => navigation.navigate('Shop', { shopId: item.id })}
+          >
+            <View style={styles.shopContainer}>
+              <Image source={item.image} style={styles.shopImage} />
+              <Text style={styles.shopName}>{item.name}</Text>
+              <Text style={styles.shopDescription}>{item.description}</Text>
+            </View>
+          </TouchableWithoutFeedback>
         )}
       />
     </View>
   );
 };
+
+// ... (remaining code)
 
 const styles = StyleSheet.create({
   container: {
