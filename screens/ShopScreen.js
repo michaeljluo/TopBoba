@@ -4,7 +4,6 @@ import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
 const shopDetails = {
   id: '1',
   name: 'Bubble Tea Haven',
-  overallRating: 4.5,
   address: '123 Bubble Street, Tea City',
   image: require('./images/mi_tea.png'),
   popularDrinks: [
@@ -14,19 +13,20 @@ const shopDetails = {
   ],
   reviews: [
     { id: '1', user: 'Alice', rating: 5, comment: 'Great boba, loved the atmosphere!' },
-    { id: '2', user: 'Bob', rating: 4, comment: 'Nice variety of drinks, friendly staff.' },
+    { id: '2', user: 'Bob', rating: 3, comment: 'Nice variety of drinks, friendly staff.' },
     // Add more reviews as needed
   ],
 };
 
 const ShopScreen = () => {
+  const averageRating = calculateAverageRating(shopDetails.reviews);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Image source={shopDetails.image} style={styles.shopImage} />
         <View style={styles.shopInfo}>
           <Text style={styles.shopName}>{shopDetails.name}</Text>
-          <Text style={styles.shopRating}>Overall Rating: {shopDetails.overallRating}</Text>
+          <Text style={styles.shopRating}>Overall Rating: {averageRating.toFixed(1)}</Text>
           <Text style={styles.shopAddress}>{shopDetails.address}</Text>
         </View>
       </View>
@@ -126,5 +126,15 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 });
+
+const calculateAverageRating = (reviews) => {
+    if (reviews.length === 0) {
+        return '';
+    }
+
+    const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
+    return totalRating / reviews.length;
+};
+
 
 export default ShopScreen;
