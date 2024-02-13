@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native';
 
+const IP_ADDRESS = process.env.IP_ADDRESS
 // const bobaShops = [
 //   {
 //     id: '1',
@@ -28,16 +29,19 @@ const HomeScreen = ({ navigation }) => {
 
   const fetchBobaShops = async () => {
     try {
-      console.log(process.env)
-      console.log(`http://${process.env.IP_ADDRESS}:5000/api/shops`)
+      // console.log(`http://${IP_ADDRESS}:5000/api/shops`)
       const response = await fetch(`http://${process.env.IP_ADDRESS}:5000/api/shops`); // Change URL if needed
       const data = await response.json();
       setBobaShops(data);
-      console.log(data)
+      // console.log(data)
     } catch (error) {
       console.error('Error fetching boba shops:', error);
     }
   };
+
+  // Import all the images from the assets/images folder
+  // path: data
+  const images = require.context('./', true, /\.png$/);
 
   return (
     <View style={styles.container}>
@@ -49,7 +53,7 @@ const HomeScreen = ({ navigation }) => {
             onPress={() => navigation.navigate('Shop', { shopId: item.id })}
           >
             <View style={styles.shopContainer}>
-              <Image source={{ uri: item.image }} style={styles.shopImage} />
+            <Image source={images(item.image)} style={styles.shopImage} />
               <Text style={styles.shopName}>{item.name}</Text>
               <Text style={styles.shopDescription}>{item.description}</Text>
             </View>
