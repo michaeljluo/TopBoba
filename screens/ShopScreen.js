@@ -29,22 +29,21 @@ const ShopScreen = ({route, navigation}) => {
   }
 
   const calculateAverageRating = (reviews) => {
-    if (reviews.length === 0) {
-      return '';
+    if (reviews == undefined || reviews.length === 0) {
+      return 'None';
     }
     const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
-    return totalRating / reviews.length;
+    return Math.round(totalRating / reviews.length * 10)/10;
   };
 
-  console.log(shop); 
-  // const averageRating = calculateAverageRating(shopDetails.reviews);
+  const averageRating = calculateAverageRating(reviews);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Image source={images(shop.image)} style={styles.shopImage} />
         <View style={styles.shopInfo}>
           <Text style={styles.shopName}>{shop.name}</Text>
-          <Text style={styles.shopRating}>Overall Rating: {0}</Text>
+          <Text style={styles.shopRating}>Overall Rating: {averageRating}</Text>
           <Text style={styles.shopAddress}>{shop.address}</Text>
         </View>
       </View>
