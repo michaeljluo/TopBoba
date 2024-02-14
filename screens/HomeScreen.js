@@ -50,7 +50,7 @@ const HomeScreen = ({ navigation }) => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableWithoutFeedback
-            onPress={() => navigation.navigate('Shop', { shopId: item.id })}
+            onPress={() => navigation.navigate('Shop', { shop: item })}
           >
             <View style={styles.shopContainer}>
             <Image source={images(item.image)} style={styles.shopImage} />

@@ -1,40 +1,58 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
 
-const shopDetails = {
-  id: '1',
-  name: 'Bubble Tea Haven',
-  address: '123 Bubble Street, Tea City',
-  image: require('./images/mi_tea.png'),
-  popularDrinks: [
-    { id: '1', name: 'Classic Milk Tea' },
-    { id: '2', name: 'Taro Slush' },
-    { id: '3', name: 'Passion Fruit Green Tea' },
-  ],
-  reviews: [
-    { id: '1', user: 'Alice', rating: 5, comment: 'Great boba, loved the atmosphere!' },
-    { id: '2', user: 'Bob', rating: 3, comment: 'Nice variety of drinks, friendly staff.' },
-    // Add more reviews as needed
-  ],
-};
+const IP_ADDRESS = process.env.IP_ADDRESS
 
-const ShopScreen = () => {
-  const averageRating = calculateAverageRating(shopDetails.reviews);
+
+
+const ShopScreen = ({route, navigation}) => {
+  const [reviews, setReviews] = useState([]);
+  const { shop } = route.params;
+  const popularDrinks = [];
+
+  // Import all the images from the assets/images folder
+  // path: data
+  const images = require.context('./', true, /\.png$/);
+
+  useEffect(() => {
+    fetchReviews();
+  }, [])
+
+  const fetchReviews = async () =>{
+    try{
+      const response = await fetch(`http:/${process.env.IP_ADDRESS}:5000/api/shop?id=${shop.id}`);
+      const data = await response.json();
+      setReviews(data);
+    } catch(e){
+      console.error("Error fetching reviews:", e)
+    }
+  }
+
+  const calculateAverageRating = (reviews) => {
+    if (reviews.length === 0) {
+      return '';
+    }
+    const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
+    return totalRating / reviews.length;
+  };
+
+  console.log(shop); 
+  // const averageRating = calculateAverageRating(shopDetails.reviews);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image source={shopDetails.image} style={styles.shopImage} />
+        <Image source={images(shop.image)} style={styles.shopImage} />
         <View style={styles.shopInfo}>
-          <Text style={styles.shopName}>{shopDetails.name}</Text>
-          <Text style={styles.shopRating}>Overall Rating: {averageRating.toFixed(1)}</Text>
-          <Text style={styles.shopAddress}>{shopDetails.address}</Text>
+          <Text style={styles.shopName}>{shop.name}</Text>
+          <Text style={styles.shopRating}>Overall Rating: {0}</Text>
+          <Text style={styles.shopAddress}>{shop.address}</Text>
         </View>
       </View>
 
       <View style={styles.popularDrinksContainer}>
         <Text style={styles.sectionTitle}>Most Popular Drinks</Text>
         <FlatList
-          data={shopDetails.popularDrinks}
+          data={popularDrinks}
           keyExtractor={(item) => item.id}
           horizontal
           renderItem={({ item }) => (
@@ -48,11 +66,11 @@ const ShopScreen = () => {
       <View style={styles.reviewsContainer}>
         <Text style={styles.sectionTitle}>User Reviews</Text>
         <FlatList
-          data={shopDetails.reviews}
+          data={reviews}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View style={styles.reviewCard}>
-              <Text style={styles.reviewUser}>{item.user}</Text>
+              <Text style={styles.reviewUser}>{item.user_name}</Text>
               <Text style={styles.reviewRating}>Rating: {item.rating}</Text>
               <Text style={styles.reviewComment}>{item.comment}</Text>
             </View>
@@ -126,15 +144,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 });
-
-const calculateAverageRating = (reviews) => {
-    if (reviews.length === 0) {
-        return '';
-    }
-
-    const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
-    return totalRating / reviews.length;
-};
 
 
 export default ShopScreen;
